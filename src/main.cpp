@@ -51,7 +51,6 @@ int main()
     CsvStorage storage(usersCsv, entriesCsv);
 
     cout << "=== Registro de Horas Freelance (C++) ===\n";
-    // Menú de autenticación
     User currentUser;
     while (true)
     {

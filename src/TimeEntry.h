@@ -8,8 +8,8 @@ struct TimeEntry
 {
     string username;
     int year;
-    int isoWeek; // Semana ISO (1-53)
-    int hours;   // Horas trabajadas
+    int isoWeek;
+    int hours;
     string comment;
     static TimeEntry fromCsvLine(const string &line);
     string toCsvLine() const;
