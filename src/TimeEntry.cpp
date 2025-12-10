@@ -38,36 +38,36 @@ string TimeEntry::toCsvLine() const
     return ss.str();
 }
 
-// Cálculo simple usando std::tm y semana ISO aproximada
 static int isoWeekNumber(tm tm)
 {
-    // Basado en algoritmo aproximado: usar la semana del jueves
-    // Convertir tm a time_t y encontrar jueves de la semana actual
+    tm.tm_hour = 12;
+    tm.tm_min = 0;
+    tm.tm_sec = 0;
+
     std::time_t t = std::mktime(&tm);
     std::tm *ptm = std::localtime(&t);
-    int wday = ptm->tm_wday; // 0=domingo...6=sábado
-    // Convertir a 1=lunes..7=domingo
+    int wday = ptm->tm_wday;
     int isoWday = (wday == 0) ? 7 : wday;
-    // Desplazar al jueves
     int deltaToThursday = 4 - isoWday;
     t += deltaToThursday * 24 * 60 * 60;
-    std::tm *thursday = std::localtime(&t);
-    // Semana ISO = 1 + (día del año del jueves - día del año del 1er jueves del año) / 7
-    int y = thursday->tm_year + 1900;
+    std::tm thursday = *std::localtime(&t);
+    int y = thursday.tm_year + 1900;
 
     std::tm firstJan{};
     firstJan.tm_year = y - 1900;
     firstJan.tm_mon = 0;
     firstJan.tm_mday = 1;
+    firstJan.tm_hour = 12;
+    firstJan.tm_min = 0;
+    firstJan.tm_sec = 0;
     std::mktime(&firstJan);
     int firstWday = firstJan.tm_wday;
     int firstIsoWday = (firstWday == 0) ? 7 : firstWday;
-    // Primer jueves del año
-    int daysToFirstThursday = (4 - firstIsoWday);
+    int daysToFirstThursday = (4 - firstIsoWday + 7) % 7;
     std::time_t firstThursdayTime = std::mktime(&firstJan) + daysToFirstThursday * 24 * 60 * 60;
-    std::tm *firstThursday = std::localtime(&firstThursdayTime);
+    std::tm firstThursday = *std::localtime(&firstThursdayTime);
 
-    int diffDays = (int)((std::mktime(thursday) - std::mktime(firstThursday)) / (24 * 60 * 60));
+    int diffDays = static_cast<int>(std::difftime(std::mktime(&thursday), std::mktime(&firstThursday)) / (24 * 60 * 60));
     int week = 1 + diffDays / 7;
     return week;
 }

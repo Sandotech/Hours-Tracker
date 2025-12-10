@@ -5,25 +5,25 @@ using namespace std;
 
 static string trim(const string &s)
 {
-    size_t start = s.find_first_not_of(" \t\r\n");
-    size_t end = s.find_last_not_of(" \t\r\n");
-    if (start == string::npos)
+    size_t startPos = s.find_first_not_of(" \t\r\n");
+    size_t endPos = s.find_last_not_of(" \t\r\n");
+    if (startPos == string::npos)
         return "";
-    return s.substr(start, end - start + 1);
+    return s.substr(startPos, endPos - startPos + 1);
 }
 
 User User::fromCsvLine(const string &line)
 {
-    stringstream ss(line);
-    string username, password, fullName;
-    getline(ss, username, ',');
-    getline(ss, password, ',');
-    getline(ss, fullName, ',');
-    User u;
-    u.username = trim(username);
-    u.password = trim(password);
-    u.fullName = trim(fullName);
-    return u;
+    stringstream lineStream(line);
+    string rawUsername, rawPassword, rawFullName;
+    getline(lineStream, rawUsername, ',');
+    getline(lineStream, rawPassword, ',');
+    getline(lineStream, rawFullName, ',');
+    User userObj;
+    userObj.username = trim(rawUsername);
+    userObj.password = trim(rawPassword);
+    userObj.fullName = trim(rawFullName);
+    return userObj;
 }
 
 string User::toCsvLine() const

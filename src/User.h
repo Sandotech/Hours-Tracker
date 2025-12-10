@@ -6,7 +6,7 @@ using namespace std;
 struct User
 {
     string username;
-    string password; // Para simplicidad: texto plano. En producción usar hash.
+    string password;
     string fullName;
 
     static User fromCsvLine(const string &line);
